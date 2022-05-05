@@ -2,11 +2,15 @@
 map_out/
 miou_out/
 VOCdevkit/
+VOCdevkit_backup/
 datasets/
 Medical_Datasets/
 lfw/
 logs/
 model_data/
+img/
+!*README.md
+*.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

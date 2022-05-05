@@ -1,4 +1,11 @@
+## Siamese YOLOv4
+
+在[bubbliiiing的YOLOv4实现](https://github.com/bubbliiiing/yolov4-pytorch)的基础上修改了`dataloader.py和yolo.py`从而实现孪生神经网络，用于查找两张图片中的不同，并使用框标记出。
+
+仅供孪生网络搭建学习使用，网络结构简单，处理效果比较有限。
+
 ## YOLOV4：You Only Look Once目标检测模型在pytorch当中的实现
+
 ---
 
 ## 目录
