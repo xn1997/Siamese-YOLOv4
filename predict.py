@@ -85,8 +85,9 @@ if __name__ == "__main__":
             img2：无瑕疵的图片
         '''
         while True:
-            img1 = 'VOCdevkit/VOC2007/JPEGImages/1.jpg'
-            img2 = 'VOCdevkit/VOC2007/TemplateImages/1.jpg'
+            num = 1
+            img1 = f'VOCdevkit/VOC2007/JPEGImages/{str(num)}.jpg'
+            img2 = f'VOCdevkit/VOC2007/TemplateImages/{str(num)}.jpg'
             # img = input('Input image filename:')
             try:
                 image = [Image.open(img1), Image.open(img2)]
@@ -95,7 +96,8 @@ if __name__ == "__main__":
                 continue
             else:
                 r_image = yolo.detect_image(image, crop = crop, count=count)
-                r_image.show()
+                # r_image.show()
+                [_.show() for _ in r_image]
             exit()
 
     elif mode == "video":

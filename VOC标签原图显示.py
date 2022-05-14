@@ -38,7 +38,9 @@ if __name__ == '__main__':
     xml_dir = os.path.join(root, 'Annotations')
     save_dir = os.path.join(root, 'viz_images')
     image_list = os.listdir(image_dir)
-    for i in  image_list:
+    for i in image_list:
+        if '.md' in i:
+            continue
         image_path = os.path.join(image_dir,i)
         xml_path = os.path.join(xml_dir,i.replace('.jpg','.xml'))
         save_viz_image(image_path,xml_path,save_dir)

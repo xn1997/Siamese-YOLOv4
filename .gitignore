@@ -2,6 +2,7 @@
 map_out/
 miou_out/
 VOCdevkit/
+!VOCdevkit/VOC2007/
 VOCdevkit_backup/
 datasets/
 Medical_Datasets/

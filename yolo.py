@@ -25,7 +25,7 @@ class YOLO(object):
         #   验证集损失较低不代表mAP较高，仅代表该权值在验证集上泛化性能较好。
         #   如果出现shape不匹配，同时要注意训练时的model_path和classes_path参数的修改
         #--------------------------------------------------------------------------#
-        "model_path"        : 'logs/best_epoch_weights.pth',
+        "model_path"        : 'logs/ep5000-loss0.000-val_loss0.000.pth',
         "classes_path"      : 'model_data/cls_classes.txt',
         #---------------------------------------------------------------------#
         #   anchors_path代表先验框对应的txt文件，一般不修改。
@@ -40,7 +40,7 @@ class YOLO(object):
         #---------------------------------------------------------------------#
         #   只有得分大于置信度的预测框会被保留下来
         #---------------------------------------------------------------------#
-        "confidence"        : 0.01,
+        "confidence"        : 0.1,
         #---------------------------------------------------------------------#
         #   非极大抑制所用到的nms_iou大小
         #---------------------------------------------------------------------#
@@ -49,7 +49,7 @@ class YOLO(object):
         #   该变量用于控制是否使用letterbox_image对输入图像进行不失真的resize，
         #   在多次测试后，发现关闭letterbox_image直接resize的效果更好
         #---------------------------------------------------------------------#
-        "letterbox_image"   : False,
+        "letterbox_image"   : True,
         #-------------------------------#
         #   是否使用Cuda
         #   没有GPU可以设置成False
@@ -216,7 +216,7 @@ class YOLO(object):
             draw.text(text_origin, str(label,'UTF-8'), fill=(0, 0, 0), font=font)
             del draw
 
-        return image[0]
+        return image
 
     def get_FPS(self, image, test_interval):
         image_shape = np.array(np.shape(image)[0:2])

@@ -4,7 +4,7 @@ from random import sample, shuffle
 import cv2
 import numpy as np
 import torch
-from PIL import Image
+from PIL import Image, ImageOps
 from torch.utils.data.dataset import Dataset
 
 from utils.utils import cvtColor, preprocess_input
@@ -23,6 +23,7 @@ class YoloDataset(Dataset):
 
         self.epoch_now          = -1
         self.length             = len(self.annotation_lines)
+        self.tmp = 0
 
     def __len__(self):
         return self.length
@@ -61,6 +62,10 @@ class YoloDataset(Dataset):
         image1, box = self.get_first_data(annotation_line,input_shape)
         image2 = self.get_second_data(annotation_line,input_shape)
         image_data = [image1, image2]
+        # cv2.imshow(str(self.tmp),image1.astype(np.uint8))
+        # self.tmp += 1
+        # cv2.imshow(str(self.tmp), image2.astype(np.uint8))
+        # self.tmp += 1
         return image_data, box
 
     def get_first_data(self, annotation_line, input_shape):
@@ -69,6 +74,7 @@ class YoloDataset(Dataset):
         #   读取图像并转换成RGB图像
         # ------------------------------#
         image = Image.open(line[0])
+        image = ImageOps.exif_transpose(image)
         image = cvtColor(image)
         # ------------------------------#
         #   获得图像的高宽与目标高宽
@@ -118,6 +124,7 @@ class YoloDataset(Dataset):
         #   读取图像并转换成RGB图像
         #------------------------------#
         image   = Image.open(image2_path)
+        image = ImageOps.exif_transpose(image)
         image   = cvtColor(image)
         #------------------------------#
         #   获得图像的高宽与目标高宽
