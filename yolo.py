@@ -25,7 +25,7 @@ class YOLO(object):
         #   验证集损失较低不代表mAP较高，仅代表该权值在验证集上泛化性能较好。
         #   如果出现shape不匹配，同时要注意训练时的model_path和classes_path参数的修改
         #--------------------------------------------------------------------------#
-        "model_path"        : 'logs_1/best_epoch_weights.pth',
+        "model_path"        : 'logs/best_epoch_weights.pth',
         "classes_path"      : 'model_data/cls_classes.txt',
         #---------------------------------------------------------------------#
         #   anchors_path代表先验框对应的txt文件，一般不修改。
@@ -113,24 +113,24 @@ class YOLO(object):
         #---------------------------------------------------#
         #   计算输入图片的高和宽
         #---------------------------------------------------#
-        image_shape = np.array(np.shape(image)[0:2])
+        image_shape = np.array(np.shape(image[0])[0:2])
         #---------------------------------------------------------#
         #   在这里将图像转换成RGB图像，防止灰度图在预测时报错。
         #   代码仅仅支持RGB图像的预测，所有其它类型的图像都会转化成RGB
         #---------------------------------------------------------#
-        image       = cvtColor(image)
+        image       = [cvtColor(_) for _ in image]
         #---------------------------------------------------------#
         #   给图像增加灰条，实现不失真的resize
         #   也可以直接resize进行识别
         #---------------------------------------------------------#
-        image_data  = resize_image(image, (self.input_shape[1],self.input_shape[0]), self.letterbox_image)
+        image_data  = [resize_image(_, (self.input_shape[1],self.input_shape[0]), self.letterbox_image) for _ in image]
         #---------------------------------------------------------#
         #   添加上batch_size维度
         #---------------------------------------------------------#
-        image_data  = np.expand_dims(np.transpose(preprocess_input(np.array(image_data, dtype='float32')), (2, 0, 1)), 0)
+        image_data  = [np.expand_dims(np.transpose(preprocess_input(np.array(_, dtype='float32')), (2, 0, 1)), 0) for _ in image_data]
 
         with torch.no_grad():
-            images = torch.from_numpy(image_data)
+            images = torch.from_numpy(np.array(image_data))
             if self.cuda:
                 images = images.cuda()
             #---------------------------------------------------------#
@@ -153,8 +153,8 @@ class YOLO(object):
         #---------------------------------------------------------#
         #   设置字体与边框厚度
         #---------------------------------------------------------#
-        font        = ImageFont.truetype(font='model_data/simhei.ttf', size=np.floor(3e-2 * image.size[1] + 0.5).astype('int32'))
-        thickness   = int(max((image.size[0] + image.size[1]) // np.mean(self.input_shape), 1))
+        font        = ImageFont.truetype(font='model_data/simhei.ttf', size=np.floor(3e-2 * image[0].size[1] + 0.5).astype('int32'))
+        thickness   = int(max((image[0].size[0] + image[0].size[1]) // np.mean(self.input_shape), 1))
         #---------------------------------------------------------#
         #   计数
         #---------------------------------------------------------#
@@ -175,13 +175,13 @@ class YOLO(object):
                 top, left, bottom, right = top_boxes[i]
                 top     = max(0, np.floor(top).astype('int32'))
                 left    = max(0, np.floor(left).astype('int32'))
-                bottom  = min(image.size[1], np.floor(bottom).astype('int32'))
-                right   = min(image.size[0], np.floor(right).astype('int32'))
+                bottom  = min(image[0].size[1], np.floor(bottom).astype('int32'))
+                right   = min(image[0].size[0], np.floor(right).astype('int32'))
                 
                 dir_save_path = "img_crop"
                 if not os.path.exists(dir_save_path):
                     os.makedirs(dir_save_path)
-                crop_image = image.crop([left, top, right, bottom])
+                crop_image = image[0].crop([left, top, right, bottom])
                 crop_image.save(os.path.join(dir_save_path, "crop_" + str(i) + ".png"), quality=95, subsampling=0)
                 print("save crop_" + str(i) + ".png to " + dir_save_path)
         #---------------------------------------------------------#
@@ -196,11 +196,11 @@ class YOLO(object):
 
             top     = max(0, np.floor(top).astype('int32'))
             left    = max(0, np.floor(left).astype('int32'))
-            bottom  = min(image.size[1], np.floor(bottom).astype('int32'))
-            right   = min(image.size[0], np.floor(right).astype('int32'))
+            bottom  = min(image[0].size[1], np.floor(bottom).astype('int32'))
+            right   = min(image[0].size[0], np.floor(right).astype('int32'))
 
             label = '{} {:.2f}'.format(predicted_class, score)
-            draw = ImageDraw.Draw(image)
+            draw = ImageDraw.Draw(image[0])
             label_size = draw.textsize(label, font)
             label = label.encode('utf-8')
             print(label, top, left, bottom, right)
@@ -216,7 +216,7 @@ class YOLO(object):
             draw.text(text_origin, str(label,'UTF-8'), fill=(0, 0, 0), font=font)
             del draw
 
-        return image
+        return image[0]
 
     def get_FPS(self, image, test_interval):
         image_shape = np.array(np.shape(image)[0:2])

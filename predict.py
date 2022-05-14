@@ -53,7 +53,7 @@ if __name__ == "__main__":
     #-------------------------------------------------------------------------#
     #   dir_origin_path     指定了用于检测的图片的文件夹路径
     #   dir_save_path       指定了检测完图片的保存路径
-    #   
+    #
     #   dir_origin_path和dir_save_path仅在mode='dir_predict'时有效
     #-------------------------------------------------------------------------#
     dir_origin_path = "img/"
@@ -79,17 +79,24 @@ if __name__ == "__main__":
         在原图上利用矩阵的方式进行截取。
         4、如果想要在预测图上写额外的字，比如检测到的特定目标的数量，可以进入yolo.detect_image函数，在绘图部分对predicted_class进行判断，
         比如判断if predicted_class == 'car': 即可判断当前目标是否为车，然后记录数量即可。利用draw.text即可写字。
+        
+        针对Siamese：
+        1.  img1：有瑕疵的图片
+            img2：无瑕疵的图片
         '''
         while True:
-            img = input('Input image filename:')
+            img1 = 'VOCdevkit/VOC2007/JPEGImages/1.jpg'
+            img2 = 'VOCdevkit/VOC2007/TemplateImages/1.jpg'
+            # img = input('Input image filename:')
             try:
-                image = Image.open(img)
+                image = [Image.open(img1), Image.open(img2)]
             except:
                 print('Open Error! Try again!')
                 continue
             else:
                 r_image = yolo.detect_image(image, crop = crop, count=count)
                 r_image.show()
+            exit()
 
     elif mode == "video":
         capture = cv2.VideoCapture(video_path)
